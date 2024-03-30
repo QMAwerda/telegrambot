@@ -1,5 +1,7 @@
 package main
 
+//TODO: Стоит передавать host как и mustToken из параметров вместо const tgBotHost
+
 import (
 	"flag"
 	"log"
@@ -7,16 +9,15 @@ import (
 	"github.com/QMAwerda/telegrambot/clients/telegram"
 )
 
-// Стоит передавать хост как и mustToken из параметров, так приложение будет более гибким
 const (
 	tgBotHost = "api.telegram.org"
 )
 
 func main() {
 
-	//token = flags.Get(token)
+	//token = flags.Get(token) - done
 
-	//tgClient = telegram.New(token)
+	//tgClient = telegram.New(token) - done
 
 	//fetcher = fetcher.New()
 	//processor = processor.New()
@@ -25,7 +26,7 @@ func main() {
 
 	// Реализуем:
 
-	tgClient := telegram.New(tgBotHost, mustToken()) // создае тг клиента
+	tgClient := telegram.New(tgBotHost, mustToken())
 
 }
 
