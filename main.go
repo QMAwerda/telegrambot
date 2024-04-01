@@ -6,28 +6,31 @@ import (
 	"flag"
 	"log"
 
-	"github.com/QMAwerda/telegrambot/clients/telegram"
+	tgClient "github.com/QMAwerda/telegrambot/clients/telegram"
+	"github.com/QMAwerda/telegrambot/consumer/event-consumer"
+	"github.com/QMAwerda/telegrambot/events/telegram"
+	"github.com/QMAwerda/telegrambot/storage/files"
 )
 
-const (
-	tgBotHost = "api.telegram.org"
+const ( // лучше вывести путь до файлов в параметры конфига
+	tgBotHost   = "api.telegram.org"
+	storagePath = "files_storage"
+	batchSize   = 100 // размер пачки
 )
 
 func main() {
 
-	//token = flags.Get(token) - done
+	eventsProcessor := telegram.New(
+		tgClient.New(tgBotHost, mustToken()),
+		files.New(storagePath),
+	)
 
-	//tgClient = telegram.New(token) - done
+	log.Print("service started")
 
-	//fetcher = fetcher.New()
-	//processor = processor.New()
-
-	//consumer.Start(fetcher, processor)
-
-	// Реализуем:
-
-	tgClient := telegram.New(tgBotHost, mustToken())
-
+	consumer := eventconsumer.New(eventsProcessor, eventsProcessor, batchSize)
+	if err := consumer.Start(); err != nil {
+		log.Fatal("service is stopped", err)
+	}
 }
 
 func mustToken() string {

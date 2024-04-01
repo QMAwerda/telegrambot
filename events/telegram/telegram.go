@@ -9,9 +9,6 @@ import (
 	"github.com/QMAwerda/telegrambot/storage"
 )
 
-// этот тип реализует интерфейс процессор и еще один интерфейс. Возможно, его стоит назвать иначе.
-// В целом, это не проблема, ведь извне мы будем работать только с интерфейсом и нам не необходимо знать о пакете telegram
-// и о том, что у него есть структура Processor, чтобы не привязываться к реализации.
 type Processor struct {
 	tg      *telegram.Client
 	offset  int
@@ -28,7 +25,7 @@ var (
 	ErrUnknowMetaType  = errors.New("unknown meta type")
 )
 
-// Создаем процессор. Почему некоторые по указателю, а некоторые параметры без?
+// не принято передавать интерфейс по указателю, поэтому storage.Storage
 func New(client *telegram.Client, storage storage.Storage) *Processor {
 	return &Processor{ // offset итак по умолчанию будет 0
 		tg:      client,
@@ -41,7 +38,7 @@ func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 	if err != nil {
 		return nil, e.Wrap("can't get events", err)
 	}
-	// возможно, тут стоит вернуть внутреннюю ошибку о том, что updates пустойы
+	// возможно, тут стоит вернуть внутреннюю ошибку о том, что updates пустой
 	if len(updates) == 0 {
 		return nil, nil
 	}

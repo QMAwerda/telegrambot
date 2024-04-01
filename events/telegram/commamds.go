@@ -16,17 +16,10 @@ const (
 	StartCmd = "/start"
 )
 
-// это что-то вроде API роутера. Мы будем смотреть на текст сообщения и по его содержанию понимать, какая это команда.
-// Эту логику можно вынести в отдельный пакет, но она сильно связана с телеграмом, поэтому оставим ее тут.
 func (p *Processor) doCmd(text string, chatID int, username string) error {
-	text = strings.TrimSpace(text) // удаляем пробелы из строки
-	// пишем содержимое команды и автора сообщения в лог, чтобы можно было проверить работу.
-	log.Printf("got new command '%s' from '%s", text, username)
+	text = strings.TrimSpace(text) // delete spaces
 
-	// add page: http://...
-	// rnd page: /rnd
-	// help: /help
-	// start: /start: hello + help
+	log.Printf("got new command '%s' from '%s", text, username)
 
 	if isAddCmd(text) {
 		return p.savePage(chatID, text, username)
@@ -48,7 +41,7 @@ func (p *Processor) savePage(chatID int, pageURL string, username string) (err e
 	defer func() { err = e.WrapIfErr("can't do command: save page", err) }()
 
 	page := &storage.Page{
-		URL:      pageURL, // называем, чтоб не конфликтовать с пакетом url
+		URL:      pageURL,
 		UserName: username,
 	}
 
