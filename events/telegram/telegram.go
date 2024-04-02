@@ -25,9 +25,8 @@ var (
 	ErrUnknowMetaType  = errors.New("unknown meta type")
 )
 
-// не принято передавать интерфейс по указателю, поэтому storage.Storage
 func New(client *telegram.Client, storage storage.Storage) *Processor {
-	return &Processor{ // offset итак по умолчанию будет 0
+	return &Processor{
 		tg:      client,
 		storage: storage,
 	}
@@ -38,7 +37,7 @@ func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 	if err != nil {
 		return nil, e.Wrap("can't get events", err)
 	}
-	// возможно, тут стоит вернуть внутреннюю ошибку о том, что updates пустой
+
 	if len(updates) == 0 {
 		return nil, nil
 	}
@@ -49,13 +48,13 @@ func (p *Processor) Fetch(limit int) ([]events.Event, error) {
 		res = append(res, event(u))
 	}
 
-	p.offset = updates[len(updates)-1].ID + 1 // Тогда при след. запросах получим новые сообщения.
+	p.offset = updates[len(updates)-1].ID + 1
 
 	return res, nil
 }
 
 func (p *Processor) Process(event events.Event) error {
-	switch event.Type { // чтобы работать с другими апдейтами тг, нужно просто добавить еще один кейс
+	switch event.Type {
 	case events.Message:
 		return p.processMessage(event)
 	default:
@@ -70,9 +69,6 @@ func (p *Processor) processMessage(event events.Event) (err error) {
 	if err != nil {
 		return err
 	}
-	// Если пользователь скинул ссылку, ее нужно сохранить, если отправил команду rand.Ind, то нужно найти ссылку и вернуть
-	// Если отправит help, нужно дать ему краткую справку по боту, чтоб он понимал, как им пользоваться
-	// Назовем все эти действия командами и вынесем в отдельный файл
 
 	if err := p.doCmd(event.Text, meta.ChatID, meta.Username); err != nil {
 		return err
@@ -82,7 +78,7 @@ func (p *Processor) processMessage(event events.Event) (err error) {
 }
 
 func meta(event events.Event) (Meta, error) {
-	res, ok := event.Meta.(Meta) // проверка, что поле не nil, а именно Meta (приведением его к типу Meta)
+	res, ok := event.Meta.(Meta)
 	if !ok {
 		return Meta{}, e.Wrap("can't get meta", ErrUnknowMetaType)
 	}
@@ -98,7 +94,7 @@ func event(upd telegram.Update) events.Event {
 		Text: fetchText(upd),
 	}
 
-	if updType == events.Message { // если message, то поля upd.Message точно ненулевые
+	if updType == events.Message {
 		res.Meta = Meta{
 			ChatID:   upd.Message.Chat.ID,
 			Username: upd.Message.From.Username,
@@ -106,8 +102,6 @@ func event(upd telegram.Update) events.Event {
 	}
 
 	return res
-
-	// chatID username
 }
 
 func fetchText(upd telegram.Update) string {
