@@ -17,9 +17,6 @@ type Client struct {
 	client   http.Client
 }
 
-// хост api/путь
-// tg-bot.com/bot<token>
-
 const (
 	getUpdatesMethod  = "getUpdates"
 	sendMessageMethod = "sendMessage"

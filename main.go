@@ -1,7 +1,5 @@
 package main
 
-//TODO: Стоит передавать host как и mustToken из параметров вместо const tgBotHost
-
 import (
 	"flag"
 	"log"
@@ -12,10 +10,12 @@ import (
 	"github.com/QMAwerda/telegrambot/storage/files"
 )
 
-const ( // лучше вывести путь до файлов в параметры конфига
+// TODO: вывести путь до файлов в параметры конфига
+// TODO: передавать tgBotHost как и mustToken из параметров вместо константы
+const (
 	tgBotHost   = "api.telegram.org"
 	storagePath = "files_storage"
-	batchSize   = 100 // размер пачки
+	batchSize   = 100
 )
 
 func main() {

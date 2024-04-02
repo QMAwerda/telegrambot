@@ -17,7 +17,7 @@ const (
 )
 
 func (p *Processor) doCmd(text string, chatID int, username string) error {
-	text = strings.TrimSpace(text) // delete spaces
+	text = strings.TrimSpace(text)
 
 	log.Printf("got new command '%s' from '%s", text, username)
 
@@ -27,7 +27,7 @@ func (p *Processor) doCmd(text string, chatID int, username string) error {
 
 	switch text {
 	case RndCmd:
-		return p.sendRandom(chatID, username) // лучше делать неэкспортируемыми команды, используемые внутри типа
+		return p.sendRandom(chatID, username)
 	case HelpCmd:
 		return p.sendHelp(chatID)
 	case StartCmd:
@@ -69,11 +69,11 @@ func (p *Processor) sendRandom(chatID int, username string) (err error) {
 	defer func() { err = e.WrapIfErr("can't do command: can't send random", err) }()
 
 	page, err := p.storage.PickRandom(username)
-	if err != nil && !errors.Is(err, storage.ErrNoSavedPages) { // и при этом есть сохраненные страницы
+	if err != nil && !errors.Is(err, storage.ErrNoSavedPages) {
 		return err
 	}
 
-	if errors.Is(err, storage.ErrNoSavedPages) { // нет сохраненных страниц
+	if errors.Is(err, storage.ErrNoSavedPages) {
 		return p.tg.SendMessage(chatID, msgNoSavedPages)
 	}
 
@@ -81,7 +81,7 @@ func (p *Processor) sendRandom(chatID int, username string) (err error) {
 		return err
 	}
 
-	return p.storage.Remove(page) // удаляем отрправленную ссылку
+	return p.storage.Remove(page)
 
 }
 
@@ -98,7 +98,6 @@ func isAddCmd(text string) bool {
 }
 
 func isURL(text string) bool {
-	// помним, что ссылки без префикса hhtps:// буду считаьтся невалидными
 	u, err := url.Parse(text)
 
 	return err == nil && u.Host != ""
