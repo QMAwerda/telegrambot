@@ -1,28 +1,38 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"log"
 
 	tgClient "github.com/QMAwerda/telegrambot/clients/telegram"
-	"github.com/QMAwerda/telegrambot/consumer/event-consumer"
+	eventconsumer "github.com/QMAwerda/telegrambot/consumer/event-consumer"
 	"github.com/QMAwerda/telegrambot/events/telegram"
-	"github.com/QMAwerda/telegrambot/storage/files"
+	"github.com/QMAwerda/telegrambot/storage/sqlite"
 )
 
 // TODO: вывести путь до файлов в параметры конфига
 // TODO: передавать tgBotHost как и mustToken из параметров вместо константы
 const (
-	tgBotHost   = "api.telegram.org"
-	storagePath = "files_storage"
-	batchSize   = 100
+	tgBotHost         = "api.telegram.org"
+	sqliteStoragePath = "data/sqlite/storage.db"
+	batchSize         = 100
 )
 
 func main() {
+	s, err := sqlite.New(sqliteStoragePath)
+	if err != nil {
+		log.Fatalf("can't connect to storage: %s", err)
+	}
+
+	// TODO контекст с таймаутом
+	if err := s.Init(context.TODO()); err != nil {
+		log.Fatal("can't init storage: ", err)
+	}
 
 	eventsProcessor := telegram.New(
 		tgClient.New(tgBotHost, mustToken()),
-		files.New(storagePath),
+		s,
 	)
 
 	log.Print("service started")
