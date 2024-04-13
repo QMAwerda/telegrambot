@@ -38,10 +38,7 @@ func (p *Processor) doCmd(text string, chatID int, username string) error {
 	}
 }
 
-// хорошим тоном будет использовать общий контекст для этого метода, который мы передадим в качестве параметра
-// ctx ... Но, чтобы программа просто заработала пока добавим пустышку констекста
-// С помощью контекста мы можем остановить работу всех внутренних функций, например, если мы по какой-то причине
-// захотим остановить метод savePage
+// TODO: передать общий контекст параметром
 func (p *Processor) savePage(chatID int, pageURL string, username string) (err error) {
 	defer func() { err = e.WrapIfErr("can't do command: save page", err) }()
 
