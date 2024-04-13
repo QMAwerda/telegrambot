@@ -48,7 +48,7 @@ func (c Consumer) Start() error {
 // TODO: ретрай
 func (c *Consumer) handleEvents(events []events.Event) error {
 	for _, event := range events {
-		log.Printf("got new events: %s", event.Text)
+		log.Printf("got new event: %s", event.Text)
 
 		if err := c.processor.Process(event); err != nil {
 			log.Printf("can't handle event %s", err.Error())
